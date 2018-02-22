@@ -460,7 +460,10 @@ qq.UploadHandlerController = function(o, namespace) {
                     log: log,
                     onCancel: options.onCancel,
                     onProgress: options.onProgress,
-                    onUuidChanged: options.onUuidChanged
+                    onUuidChanged: options.onUuidChanged,
+                    onFinalizing: function(id) {
+                        options.setStatus(id, qq.status.UPLOAD_FINALIZING);
+                    }
                 }
             );
 

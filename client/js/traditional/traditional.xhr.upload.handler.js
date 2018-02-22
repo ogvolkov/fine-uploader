@@ -297,6 +297,8 @@ qq.traditional.XhrUploadHandler = function(spec, proxy) {
     qq.override(this, function(super_) {
         return {
             finalizeChunks: function(id) {
+                proxy.onFinalizing(id);
+
                 if (spec.chunking.success.endpoint) {
                     return sendChunksCompleteRequest(id);
                 }

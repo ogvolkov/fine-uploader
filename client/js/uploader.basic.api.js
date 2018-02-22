@@ -112,7 +112,14 @@
         },
 
         cancel: function(id) {
-            this._handler.cancel(id);
+            var uploadData = this._uploadData.retrieve({id: id});
+
+            if (uploadData && uploadData.status === qq.status.UPLOAD_FINALIZING) {
+              this.log(qq.format("Ignoring cancel for file ID {} ({}).  Finalizing upload.", id, this.getName(id)), "error");
+            }
+            else {
+                this._handler.cancel(id);
+            }
         },
 
         cancelAll: function() {
