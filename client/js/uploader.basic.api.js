@@ -213,7 +213,18 @@
         },
 
         getFile: function(fileOrBlobId) {
-            return this._handler.getFile(fileOrBlobId) || null;
+            var file = this._handler.getFile(fileOrBlobId);
+            var uploadDataRecord;
+
+            if (!file) {
+                uploadDataRecord = this._uploadData.retrieve({id: fileOrBlobId});
+
+                if (uploadDataRecord) {
+                    file = uploadDataRecord.file;
+                }
+            }
+
+            return file || null;
         },
 
         getInProgress: function() {
@@ -314,6 +325,7 @@
 
         removeFileRef: function(id) {
             this._handler.expunge(id);
+            this._uploadData.removeFileRef(id);
         },
 
         reset: function() {
@@ -1106,17 +1118,15 @@
         },
 
         _handleNewFileGeneric: function(file, name, uuid, size, fileList, batchId) {
-            var self = this;
             var id = this._uploadData.addFile({
                 uuid: uuid,
                 name: name,
                 size: size,
                 batchId: batchId,
-
-                onBeforeStatusChange: function(id) {
-                    self._handler.add(id, file);
-                }
+                file: file
             });
+
+            this._handler.add(id, file);
 
             this._trackButton(id);
 
